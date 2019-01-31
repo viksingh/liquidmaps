@@ -1,0 +1,26 @@
+{
+
+ "Orders" : [
+
+{% for item in content.items %}
+
+
+
+
+
+{%- if forloop.last == true -%}
+{ "Order" : "{{item.increment_id}}" ,
+"Status": "{{item.status}} }"
+{%- else -%}
+{ "Order" : "{{item.increment_id}}",
+"Status": "{{item.status}}" },
+
+{%- endif -%}
+
+
+{% endfor %}
+
+]
+
+
+}
