@@ -1,0 +1,18 @@
+{
+
+ "States of India" : [
+
+{% for state in content.RestResponse.result %}
+
+{ "State" : "{{state.name}}" ,
+"Capital": "{{state.capital}}" }
+{% if forloop.last == false%},{% endif %}
+
+{% endfor %}
+
+
+
+]
+
+
+}
