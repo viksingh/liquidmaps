@@ -1,0 +1,31 @@
+{
+
+ "Orders" : [
+
+{% for item in content.items %}
+
+{{forloop.Last}}
+
+         {%- if forloop.Last == true -%}
+
+{% assign print_string_last =  item.increment_id  %}
+
+{ "Order" : {{print_string_last}} }
+
+         {%- else -%}
+
+{% assign print_string_nonlast =  item.increment_id  %}
+
+{ "Order" : {{print_string_nonlast}} },
+
+         {%- endif -%}
+
+
+
+
+{% endfor %}
+
+]
+
+
+}
