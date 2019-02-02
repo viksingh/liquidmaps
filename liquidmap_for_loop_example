@@ -1,0 +1,94 @@
+{
+    "definition": {
+        "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+        "actions": {
+            "ExtractStates": {
+                "inputs": {
+                    "content": "@body('Transform_JSON_to_JSON')",
+                    "schema": {
+                        "properties": {
+                            "StatesList": {
+                                "items": {
+                                    "properties": {
+                                        "Abbr": {
+                                            "type": "string"
+                                        },
+                                        "State": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "required": [
+                                        "State",
+                                        "Abbr"
+                                    ],
+                                    "type": "object"
+                                },
+                                "type": "array"
+                            }
+                        },
+                        "type": "object"
+                    }
+                },
+                "runAfter": {
+                    "Transform_JSON_to_JSON": [
+                        "Succeeded"
+                    ]
+                },
+                "type": "ParseJson"
+            },
+            "For_each": {
+                "actions": {
+                    "HTTP": {
+                        "inputs": {
+                            "method": "GET",
+                            "uri": "http://services.groupkt.com/state/get/IND/@{items('For_each')?['Abbr']}"
+                        },
+                        "runAfter": {},
+                        "type": "Http"
+                    }
+                },
+                "foreach": "@body('ExtractStates')?['StatesList']",
+                "runAfter": {
+                    "ExtractStates": [
+                        "Succeeded"
+                    ]
+                },
+                "runtimeConfiguration": {
+                    "concurrency": {
+                        "repetitions": 1
+                    }
+                },
+                "type": "Foreach"
+            },
+            "Transform_JSON_to_JSON": {
+                "inputs": {
+                    "content": "@triggerBody()",
+                    "integrationAccount": {
+                        "map": {
+                            "name": "ExtractStateInfo"
+                        }
+                    }
+                },
+                "kind": "JsonToJson",
+                "runAfter": {},
+                "type": "Liquid"
+            }
+        },
+        "contentVersion": "1.0.0.0",
+        "outputs": {},
+        "parameters": {},
+        "triggers": {
+            "Get_Indian_States": {
+                "inputs": {
+                    "method": "GET",
+                    "uri": "http://services.groupkt.com/state/get/IND/all"
+                },
+                "recurrence": {
+                    "frequency": "Month",
+                    "interval": 1
+                },
+                "type": "Http"
+            }
+        }
+    }
+}
